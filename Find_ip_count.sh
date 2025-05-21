@@ -20,5 +20,8 @@ Ngnix.log
 
 #find ip count based on response
 response="$1"
-source=$2
-awk '$9=="$response" {print $1}' $source | sort|uniq -c|sort -nr
+source="$2"
+
+awk -v res="$response" '$9 == res {print $1}' "$source" | sort | uniq -c | sort -nr
+
+
