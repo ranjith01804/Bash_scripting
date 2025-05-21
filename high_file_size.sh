@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#input sholud be in sh <filename> <Source Path> <Backup path>
 set -x  # Enable debugging
 
 SOURCE="$1"
