@@ -28,3 +28,62 @@ if [ $# -gt 0 ]; then
 else
     echo "Please enter the valid parameter"
 fi
+
+
+ansible-playbook
+
+---
+- name: Deploy User Creation Script
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Copy the user creation script
+      copy:
+        src: /path/to/create_user.sh
+        dest: /tmp/create_user.sh
+        mode: '0755'
+
+    - name: Execute the script with username variable
+      command: "/tmp/create_user.sh {{ username }}"
+
+
+
+
+
+
+
+
+Jenkins file
+
+pipeline {
+    agent any
+    parameters {
+        string(name: 'USER', defaultValue: '', description: 'Enter username to add')
+    }
+    stages {
+        stage("Running Ansible Playbook") {
+            steps {
+                catchError(buildResult: 'UNSTABLE') {
+                    script {
+                        def exitCode = sh script: '''
+                        #!/bin/bash
+                        echo "Starting Execution at $(pwd)"
+                        ls
+                        
+                        # Run Ansible Playbook
+                        ansible-playbook deploy_user_script.yml -i inventory -v -e "username=${USER}"
+                        
+                        echo "Execution Completed at $(pwd)"
+                        ''', returnStatus: true
+
+                        if (exitCode != 0) {
+                            error "❌ Ansible Playbook execution failed! Check logs."
+                        }
+                    }
+                }
+                echo "Final Build Result: ${currentBuild.result}"
+            }
+        }
+    }
+}
