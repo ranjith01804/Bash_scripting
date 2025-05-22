@@ -78,7 +78,7 @@ pipeline {
                         ''', returnStatus: true
 
                         if (exitCode != 0) {
-                            error "❌ Ansible Playbook execution failed! Check logs."
+                            error "Ansible Playbook execution has failed! Check logs."
                         }
                     }
                 }
